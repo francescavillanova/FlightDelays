@@ -66,6 +66,7 @@ public class FXMLController {
     @FXML
     void doTestConnessione(ActionEvent event) {
     	txtResult.clear();
+    	//controllo che l'utente abbia selezionato due aeroporti
     	if(cmbBoxAeroportoPartenza.getValue() == null ||
     			cmbBoxAeroportoDestinazione.getValue() == null) {
     		txtResult.appendText("Seleziona i due aeroporti!");

@@ -97,12 +97,16 @@ public class ExtFlightDelaysDAO {
 	}
 	
 	public List<Airport> getVertici(int x, Map<Integer,Airport> idMap){
+		//Voglio calcolare per ogni aeroporto (a.id) quante compagnie aeree (f.airline_id) hanno voli che partono
+		//(origin_airport_id) o arrivano (destination_airport_id) lì 
 		String sql = "SELECT a.id "
 				+ "FROM airports a, flights f "
 				+ "WHERE (a.id = f.ORIGIN_AIRPORT_ID OR a.id = f.DESTINATION_AIRPORT_ID) "
 				+ "GROUP BY a.id "
-				+ "HAVING COUNT(DISTINCT (f.AIRLINE_ID)) >= ?";
-		List<Airport> result = new ArrayList<Airport> ();
+				+ "HAVING COUNT(DISTINCT (f.AIRLINE_ID)) >= ?"; //distinct serve per contare il numero di 
+		                                                        //compagnie aeree e non il numero di voli di ognuna 
+		                                                        //in quell'aeroporto 
+		List<Airport> result = new ArrayList<Airport> (); 
 		
 		try {
 			Connection conn = ConnectDB.getConnection();
@@ -111,8 +115,8 @@ public class ExtFlightDelaysDAO {
 			ResultSet rs = st.executeQuery();
 			
 			while (rs.next()) {
-				result.add(idMap.get(rs.getInt("id")));
-			}
+				result.add(idMap.get(rs.getInt("id")));  //non creo nuovi aeroporti, aggiungo quelli che mi servono prendendoli dall'idMap
+			}                                            //per avere la mappa la passo come parametro al metodo
 			
 			conn.close();
 			return result;
@@ -123,7 +127,7 @@ public class ExtFlightDelaysDAO {
 		}
 	}
 
-	public List<Rotta> getRotte(Map<Integer, Airport> idMap) {
+	public List<Rotta> getRotte(Map<Integer, Airport> idMap) { //conto il numero di voli tra A e B
 		String sql = "SELECT f.ORIGIN_AIRPORT_ID as a1, f.DESTINATION_AIRPORT_ID as a2, COUNT(*) AS n "
 				+ "FROM flights f "
 				+ "GROUP BY f.ORIGIN_AIRPORT_ID, f.DESTINATION_AIRPORT_ID";
